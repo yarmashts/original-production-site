@@ -545,12 +545,12 @@
   // 1. היכנסו ל-https://web3forms.com
   // 2. הזינו את כתובת המייל שלכם, תקבלו "Access Key" חינמי
   // 3. הדביקו אותו כאן במקום המחרוזת למטה
-  const WEB3FORMS_KEY = 'YOUR_ACCESS_KEY_HERE';
+  const WEB3FORMS_KEY = 'e7851931-2250-4e58-b4a3-ddfc023c1714';
 
   async function sendViaWeb3Forms(fields, fileField){
-    if(WEB3FORMS_KEY === 'YOUR_ACCESS_KEY_HERE') return { skipped: true };
+    if(WEB3FORMS_KEY === 'e7851931-2250-4e58-b4a3-ddfc023c1714') return { skipped: true };
     const fd = new FormData();
-    fd.append('access_key', WEB3FORMS_KEY);
+    fd.append('e7851931-2250-4e58-b4a3-ddfc023c1714', WEB3FORMS_KEY);
     Object.entries(fields).forEach(([k,v]) => fd.append(k, v ?? ''));
     if(fileField) fd.append('attachment', fileField, 'photo.jpg');
     const res = await fetch('https://api.web3forms.com/submit', { method:'POST', body:fd });
@@ -654,7 +654,7 @@
   });
 
   // ---------- admin ----------
-  const ADMIN_CODE = 'kolnoa2026';
+  const ADMIN_CODE = 'mekorit2026';
   const adminOverlay = document.getElementById('adminOverlay');
   document.getElementById('adminLink').addEventListener('click', (e) => {
     e.preventDefault();
