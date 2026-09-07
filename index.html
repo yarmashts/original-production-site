@@ -86,6 +86,15 @@
     pointer-events:none;z-index:-1;
   }
   .eyebrow{color:var(--accent);font-size:0.95rem;margin:0 0 18px;}
+  .hero-logo{
+    width:min(150px, 32vw);height:auto;margin:0 auto 14px;
+    border-radius:14px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  }
+  .brand-word{
+    font-size:clamp(1.6rem,4.2vw,2.3rem);
+    color:var(--text);font-weight:700;margin:0 0 6px;letter-spacing:0.5px;
+  }
   .hero h1{
     font-size:clamp(2.1rem, 5.4vw, 3.6rem);
     line-height:1.18;margin:0 0 22px;
@@ -189,6 +198,39 @@
   .success-card h3{margin:0 0 10px;}
   .success-card p{color:var(--text-dim);margin:0;}
 
+  /* ---------- projects ---------- */
+  .project-grid{
+    display:grid;gap:20px;grid-template-columns:repeat(2,1fr);margin-top:36px;
+  }
+  @media(max-width:700px){.project-grid{grid-template-columns:1fr;}}
+  .project-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:26px;display:flex;flex-direction:column;gap:12px;
+  }
+  .project-card .tag{
+    display:inline-block;align-self:flex-start;
+    background:rgba(199,154,63,0.14);color:var(--accent);
+    font-size:0.78rem;padding:4px 12px;border-radius:999px;
+  }
+  .project-card h3{font-size:1.3rem;margin:0;}
+  .project-card p{color:var(--text-dim);font-size:0.92rem;margin:0;flex:1;}
+  .project-card .cta{align-self:flex-start;padding:10px 22px;font-size:0.9rem;}
+
+  .back-btn{margin-bottom:22px;padding:9px 18px;font-size:0.86rem;}
+  .status-line{
+    color:var(--accent);font-size:0.9rem;border-inline-start:2px solid var(--accent);
+    padding:2px 14px;margin:18px 0 30px;
+  }
+  .section-h{font-size:1.25rem;margin:40px 0 18px;}
+  .roles-list{display:flex;flex-direction:column;gap:14px;}
+  .role-item{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:16px 20px;
+  }
+  .role-item h4{margin:0 0 6px;font-size:1rem;}
+  .role-item p{margin:0;color:var(--text-dim);font-size:0.9rem;}
+  .project-detail-body{margin-top:10px;}
+
   /* ---------- contract page ---------- */
   .contract{margin-top:20px;}
   .contract h2{font-size:1.2rem;margin:34px 0 10px;color:var(--accent);}
@@ -227,6 +269,7 @@
   </div>
   <nav>
     <button data-page="home" class="active">ראשי</button>
+    <button data-page="projects">מיזמים בתהליך</button>
     <button data-page="join">הצטרפו אלינו</button>
     <button data-page="contract">ההסכם</button>
     <button data-page="contact">צור קשר</button>
@@ -238,7 +281,9 @@
   <!-- ================= HOME ================= -->
   <section id="page-home" class="page active">
     <div class="hero">
-      <p class="eyebrow serif">הפקה מקורית — שותפים ביצירה</p>
+      <img id="heroLogo" class="hero-logo" alt="הפקה מקורית">
+      <p class="brand-word serif">הפקה מקורית</p>
+      <p class="eyebrow">שותפים ביצירה</p>
       <h1>הפקה ששייכת לכל מי שמאמין בה</h1>
       <p class="lead">מודל חדש למימון הפקות מקור בקולנוע ובטלוויזיה, בלי תלות בלעדית בקרנות ובתקציבים ממשלתיים — צוות, שחקנים והקהל הרחב הופכים לשותפים ממשיים בהצלחה של הפרויקט.</p>
       <button class="cta" data-goto="join">הצטרפו אלינו</button>
@@ -301,6 +346,97 @@
     </div>
   </section>
 
+  <!-- ================= PROJECTS LIST ================= -->
+  <section id="page-projects" class="page">
+    <div class="page-head">
+      <p class="eyebrow serif">הפקה מקורית</p>
+      <h1>מיזמים בתהליך</h1>
+      <p>פרויקטים שנמצאים כרגע בפיתוח — לכל פרויקט אפשר לקרוא פרטים ולהגיש מועמדות לתפקידים הרלוונטיים.</p>
+    </div>
+    <div class="project-grid" id="projectGrid"></div>
+  </section>
+
+  <!-- ================= PROJECT DETAIL (dynamic) ================= -->
+  <section id="page-project-detail" class="page">
+    <div class="page-head">
+      <button class="cta ghost back-btn" data-goto="projects">← חזרה למיזמים</button>
+      <p class="eyebrow serif" id="pdEyebrow">הפקה מקורית</p>
+      <h1 id="pdTitle"></h1>
+      <p id="pdSubtitle" style="color:var(--text-dim);"></p>
+    </div>
+
+    <div class="project-detail-body">
+      <p id="pdSynopsis" class="intro"></p>
+      <p id="pdStatus" class="status-line"></p>
+
+      <h2 class="serif section-h">תפקידים פתוחים להגשת מועמדות</h2>
+      <div class="roles-list" id="pdRoles"></div>
+
+      <h2 class="serif section-h">הגשת מועמדות ל-<span id="pdFormTitle"></span></h2>
+      <form id="projectForm">
+        <div class="row2">
+          <div>
+            <label for="pFullName">שם מלא</label>
+            <input type="text" id="pFullName" required>
+          </div>
+          <div>
+            <label for="pAge">גיל</label>
+            <input type="number" id="pAge" min="0" max="120">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="pGender">מגדר</label>
+            <select id="pGender">
+              <option value="">בחרו</option>
+              <option>זכר</option>
+              <option>נקבה</option>
+              <option>מעדיפ/ה לא לציין</option>
+              <option>אחר</option>
+            </select>
+          </div>
+          <div>
+            <label for="pCity">עיר מגורים</label>
+            <input type="text" id="pCity">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="pPhone">טלפון</label>
+            <input type="tel" id="pPhone">
+          </div>
+          <div>
+            <label for="pEmail">אימייל</label>
+            <input type="email" id="pEmail">
+          </div>
+        </div>
+        <div>
+          <label for="pRole">לאיזה תפקיד את/ה מגיש/ה מועמדות?</label>
+          <select id="pRole" required></select>
+        </div>
+        <div>
+          <label for="pPhoto">תמונה (אופציונלי)</label>
+          <div class="field-photo">
+            <div class="thumb" id="pThumb">ללא תמונה</div>
+            <input type="file" id="pPhoto" accept="image/*">
+          </div>
+        </div>
+        <div>
+          <label for="pFreeText">ספרו לנו על עצמכם — ניסיון רלוונטי, קרדיטים קודמים, כל דבר חשוב</label>
+          <textarea id="pFreeText" placeholder="כתבו כאן בחופשיות..."></textarea>
+        </div>
+        <div class="submit-row">
+          <button type="submit" class="cta">שליחת מועמדות</button>
+          <span class="status-msg" id="projectFormStatus"></span>
+        </div>
+      </form>
+      <div class="success-card" id="projectSuccessCard" style="display:none;">
+        <h3 class="serif">המועמדות נשלחה! 🎬</h3>
+        <p>תודה שהגשתם מועמדות — נחזור אליכם אם יהיה התאמה.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= JOIN ================= -->
   <section id="page-join" class="page">
     <div class="page-head">
@@ -341,6 +477,45 @@
       <div class="row2">
         <div>
           <label for="phone">טלפון</label>
+          <input type="tel" id="phone">
+        </div>
+        <div>
+          <label for="email">אימייל</label>
+          <input type="email" id="email">
+        </div>
+      </div>
+
+      <fieldset>
+        <label>מה מעניין אתכם?</label>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="role" value="שחקן/שחקנית" required>שחקן/שחקנית</label>
+          <label class="chip"><input type="radio" name="role" value="צוות הפקה">צוות הפקה</label>
+          <label class="chip"><input type="radio" name="role" value="שותף שקט / משקיע">שותף שקט / משקיע</label>
+          <label class="chip"><input type="radio" name="role" value="אחר">אחר</label>
+        </div>
+      </fieldset>
+
+      <div>
+        <label for="photo">תמונה (אופציונלי)</label>
+        <div class="field-photo">
+          <div class="thumb" id="thumb">ללא תמונה</div>
+          <input type="file" id="photo" accept="image/*">
+        </div>
+      </div>
+
+      <div>
+        <label for="freeText">ספרו לנו על עצמכם — ניסיון, תחומי עניין, כל דבר שרלוונטי</label>
+        <textarea id="freeText" placeholder="כתבו כאן בחופשיות..."></textarea>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="cta">שליחה</button>
+        <span class="status-msg" id="formStatus"></span>
+      </div>
+    </form>
+
+    <div class="success-card" id="successCard" style="display:none;">
+      <h3 class="se          <label for="phone">טלפון</label>
           <input type="tel" id="phone">
         </div>
         <div>
